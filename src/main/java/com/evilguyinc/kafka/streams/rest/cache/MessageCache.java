@@ -1,5 +1,7 @@
 package com.evilguyinc.kafka.streams.rest.cache;
 
+import com.evilguyinc.kafka.streams.rest.domain.Topic;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,14 +9,14 @@ import java.util.Map;
 
 class MessageCache {
 
-    private String topic;
+    private Topic topic;
     private Map<String, List<Object>> messageCache;
     private List<Object> messageListCache;
 
     private MessageCache() {
     }
 
-    private void setTopic(String topic) {
+    private void setTopic(Topic topic) {
         this.topic = topic;
     }
 
@@ -37,7 +39,7 @@ class MessageCache {
     }
 
 
-    public static MessageCache createMessageCache(String topic) {
+    public static MessageCache createMessageCache(Topic topic) {
 
         MessageCache messageCache = new MessageCache();
         messageCache.setTopic(topic);

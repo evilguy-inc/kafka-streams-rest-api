@@ -1,5 +1,6 @@
 package com.evilguyinc.kafka.streams.rest.cache;
 
+import com.evilguyinc.kafka.streams.rest.domain.Topic;
 import com.evilguyinc.kafka.streams.rest.exception.ResourceNotFoundException;
 
 import java.util.*;
@@ -13,8 +14,10 @@ public class TopicCache {
     }
 
 
-    private void addTopic(String topic) {
-        topicCache.put(topic, MessageCache.createMessageCache(topic));
+    private void addTopic(String topicName) {
+        // TODO add topic serde, it might be different
+        Topic topic = new Topic(topicName, "Serde???");
+        topicCache.put(topicName, MessageCache.createMessageCache(topic));
     }
 
     public void putMessage(String topic, String key, Object value) {

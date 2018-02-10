@@ -1,8 +1,24 @@
 package com.evilguyinc.kafka.streams.rest.exception;
 
-public class KafkaStreamsRestException extends Exception{
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-    public KafkaStreamsRestException(String msg){
-        super(msg);
+@ResponseStatus(value = HttpStatus.METHOD_NOT_ALLOWED)
+public class KafkaStreamsRestException extends RuntimeException{
+
+    public KafkaStreamsRestException() {
+        super();
+    }
+
+    public KafkaStreamsRestException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public KafkaStreamsRestException(String message) {
+        super(message);
+    }
+
+    public KafkaStreamsRestException(Throwable cause) {
+        super(cause);
     }
 }
