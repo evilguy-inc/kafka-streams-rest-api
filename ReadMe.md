@@ -8,13 +8,25 @@ I tried to adjust timeouts, buffer size and nothing worked out so well to track 
 
 Running in docker
 -----------------
+You can pull down and run it locally by simply executing (don't forget to define correct network of your services):
+```bash
+    docker run --rm -p 9096:9096 --network=compose_default \
+        -e "RUN_ARGS=--kafka.bootstrap.servers=broker:9092 --kafka.zookeeper.connect=zookeeper:2181 --kafka.schema.registry.url=http://schema-registry:8081" \
+        -d kafka-streams-rest-api:latest
+```
+
+
+Docker compose usage example:
+```yaml
+
+```
 
 Build from source
 -----------------
 This is a quick build from source, assuming that you have everything running locally, 
 if not update [application.yml](src/main/resources/application.yml)
 
-```
+```bash
     git clone https://github.com/evilguy-inc/kafka-streams-rest-api.git
     cd kafka-streams-rest-api
     mvn spring-boot:run
@@ -23,3 +35,20 @@ if not update [application.yml](src/main/resources/application.yml)
 
 Quickstart
 ----------
+
+
+
+Support/Development
+-------------------
+
+#### Creating a docker container
+
+1. Build an artifact:
+```bash
+    mvn clean package -Pprepare-for-docker
+```
+
+2. build docker container
+```bash
+    docker build --rm -f docker/kafka-streams-rest-api/Dockerfile -t kafka-streams-rest-api:latest docker/kafka-streams-rest-api
+```

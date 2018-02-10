@@ -38,3 +38,9 @@ out
 test-output
 atlassian-ide-plugin.xml
 .gradletasknamecache
+
+# VS code
+.vscode/
+
+# Project specific
+docker/kafka-streams-rest-api/include/*.jar
