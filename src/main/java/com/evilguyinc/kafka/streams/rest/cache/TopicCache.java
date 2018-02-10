@@ -1,9 +1,8 @@
 package com.evilguyinc.kafka.streams.rest.cache;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.evilguyinc.kafka.streams.rest.exception.ResourceNotFoundException;
+
+import java.util.*;
 
 public class TopicCache {
 
@@ -26,13 +25,15 @@ public class TopicCache {
     }
 
 
-    public Set<String> getAllTopics(){
+    public Set<String> getAllTopics() {
         return topicCache.keySet();
     }
 
 
-    public List<Object> getAllMessages(String topic){
-        return topicCache.get(topic).getMessageCache();
+    public List<Object> getAllMessages(String topic) {
+        return Optional.ofNullable(topicCache.get(topic))
+                .orElseThrow(() -> new ResourceNotFoundException("Topic is not being read."))
+                .getMessageCache();
     }
 
 }

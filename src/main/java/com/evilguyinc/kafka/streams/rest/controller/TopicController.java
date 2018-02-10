@@ -3,6 +3,7 @@ package com.evilguyinc.kafka.streams.rest.controller;
 import com.evilguyinc.kafka.streams.rest.domain.Topic;
 import com.evilguyinc.kafka.streams.rest.service.MessageService;
 import com.evilguyinc.kafka.streams.rest.service.StreamService;
+import com.evilguyinc.kafka.streams.rest.service.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,20 +22,25 @@ public class TopicController {
     private StreamService streamService;
     @Autowired
     private MessageService messageService;
+    @Autowired
+    private TopicService topicService;
 
     @RequestMapping(method = POST)
     @ResponseStatus(CREATED)
     public void readTopic(@RequestBody Topic topic){
 
+        // TODO: check if topic exists before start reading it
         streamService.readTopic(topic);
     }
 
 
     @RequestMapping(method = GET)
     @ResponseStatus(OK)
-    public Set<Topic> getAllTopics(){
-        return messageService.getAllTopics();
+    public Set<String> getAllTopics(){
+        return topicService.getAllTopics();
     }
+
+    //TODO: delete topic
 
 
 }

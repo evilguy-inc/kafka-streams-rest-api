@@ -2,7 +2,6 @@ package com.evilguyinc.kafka.streams.rest.service;
 
 import com.evilguyinc.kafka.streams.rest.domain.Topic;
 import com.evilguyinc.kafka.streams.rest.properties.StreamProperties;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.avro.generic.GenericData;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.KeyValue;
@@ -23,8 +22,6 @@ public class StreamService {
     @Autowired
     private StreamProperties streamProperties;
     @Autowired
-    private ObjectWriter objectWriter;
-    @Autowired
     private MessageService messageService;
 
     private KafkaStreams streams;
@@ -40,6 +37,8 @@ public class StreamService {
     public void readTopic(Topic topic) {
 
         Properties streamProperties = this.streamProperties.getStreamProperties();
+
+        // TODO: change serde to a different if not avro
 
         StreamsBuilder streamBuilder = new StreamsBuilder();
 

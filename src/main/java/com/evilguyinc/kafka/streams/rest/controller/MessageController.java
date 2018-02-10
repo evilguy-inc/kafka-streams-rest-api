@@ -1,20 +1,14 @@
 package com.evilguyinc.kafka.streams.rest.controller;
 
-import com.evilguyinc.kafka.streams.rest.domain.Topic;
+import com.evilguyinc.kafka.streams.rest.deserializer.AvroDeserializer;
 import com.evilguyinc.kafka.streams.rest.service.MessageService;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import org.apache.avro.Schema;
-import org.apache.avro.generic.GenericData;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Iterator;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RestController
 @RequestMapping("/api/message")
@@ -23,57 +17,21 @@ public class MessageController {
     @Autowired
     private MessageService messageService;
     @Autowired
-    private ObjectWriter objectWriter;
+    private AvroDeserializer avroDeserializer;
 
-    @RequestMapping(method = POST)
+    @RequestMapping(method = GET, produces = "application/json")
     @ResponseStatus(OK)
-    public String getAllMessages(@RequestBody Topic topic) {
+    public String getAllMessages(
+            @RequestParam(value = "topic") String topic
+    ) {
 
-        StringBuilder record = new StringBuilder();
+        List<Object> messages = messageService.getAllMessages(topic);
 
-        record.append("[");
+        // TODO check if topic is avro serde
 
-            for (Iterator i = (messageService.getAllMessages(topic.getTopic())).iterator(); i.hasNext(); ) {
-                Object element = i.next();
-
-                if (element instanceof GenericData.Record)
-                    record = buildGenericDataRecord((GenericData.Record) element, record);
-
-                if (i.hasNext())
-                    record.append(",");
-
-            }
-
-        record.append("]");
-        return record.toString();
-
+        // Avro serde deserialiser into JSON
+        return avroDeserializer.deserilze(messages);
     }
 
 
-    private StringBuilder buildGenericDataRecord(GenericData.Record record, StringBuilder builder) {
-
-        if (record.getSchema().getType() == Schema.Type.RECORD) {
-
-            builder.append("{");
-
-            record.getSchema().getFields()
-                    .forEach(field -> {
-
-                        builder.append("\"").append(field.name()).append("\" :");
-
-                        if (record.get(field.name()) instanceof GenericData.Record) {
-                            buildGenericDataRecord((GenericData.Record) record.get(field.pos()), builder);
-                        } else {
-                            builder.append("\"").append(record.get(field.name())).append("\"");
-                        }
-
-                        if (field.pos() != record.getSchema().getFields().size() - 1)
-                            builder.append(",");
-
-                    });
-            builder.append("}");
-        }
-
-        return builder;
-    }
 }
