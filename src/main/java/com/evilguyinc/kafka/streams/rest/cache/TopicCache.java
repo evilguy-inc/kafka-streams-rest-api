@@ -34,9 +34,19 @@ public class TopicCache {
 
 
     public List<Object> getAllMessages(String topic) {
-        return Optional.ofNullable(topicCache.get(topic))
-                .orElseThrow(() -> new ResourceNotFoundException("Topic is not being read."))
+        return getMessageCache(topic)
                 .getMessageCache();
     }
 
+
+    public List<Object> getMessage(String topic, String key) {
+        return getMessageCache(topic)
+                .getMessage(key);
+    }
+
+
+    private MessageCache getMessageCache(String topic) {
+        return Optional.ofNullable(topicCache.get(topic))
+                .orElseThrow(() -> new ResourceNotFoundException("Topic is not being read."));
+    }
 }

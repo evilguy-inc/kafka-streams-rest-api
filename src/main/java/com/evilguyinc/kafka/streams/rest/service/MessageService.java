@@ -17,22 +17,22 @@ public class MessageService {
     @Autowired
     private TopicCache topicCache;
 
-    public void putMessage(String topic, String key, Object value){
-        topicCache.putMessage(topic,key,value);
+    public void putMessage(String topic, String key, Object value) {
+        topicCache.putMessage(topic, key, value);
     }
 
 
-    public List<Object> getAllMessages(String topic){
+    public List<Object> getAllMessages(String topic) {
         return topicCache.getAllMessages(topic);
     }
 
-    public List<Object> getMessages(String topic, Integer start, Integer lenght){
+    public List<Object> getMessages(String topic, Integer start, Integer lenght) {
         List<Object> allMessages = topicCache.getAllMessages(topic);
 
         List<Object> result = new ArrayList<>();
 
         for (int i = start;
-             i < allMessages.size() && i < (start+lenght); i++){
+             i < allMessages.size() && i < (start + lenght); i++) {
 
             result.add(allMessages.get(i));
         }
@@ -40,4 +40,8 @@ public class MessageService {
         return result;
     }
 
+
+    public List<Object> getMessage(String topic, String key) {
+        return topicCache.getMessage(topic, key);
+    }
 }

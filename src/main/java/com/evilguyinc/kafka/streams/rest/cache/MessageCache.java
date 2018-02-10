@@ -34,6 +34,10 @@ class MessageCache {
         messageListCache.add(value);
     }
 
+    public List<Object> getMessage(String key){
+        return messageCache.get(key);
+    }
+
     public List<Object> getMessageCache(){
         return messageListCache;
     }
