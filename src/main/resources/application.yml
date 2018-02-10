@@ -6,5 +6,5 @@ kafka:
   application.id: kafka-streams-rest-api
   bootstrap.servers: localhost:9092
   zookeeper.connect: localhost:2181
-  auto.offset.reset: earliest
   schema.registry.url: http://localhost:8081
+  auto.offset.reset: earliest
