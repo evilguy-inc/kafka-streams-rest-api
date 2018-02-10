@@ -21,6 +21,25 @@ public class StreamProperties {
     @Autowired
     private ConfigurableEnvironment environment;
 
+    // TODO requires another look
+
+    public Properties getKafkaConsumerProperties(){
+
+        Properties properties = new Properties();
+
+        properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+
+        getAllProperties(this.environment, KAFKA_PROPERTY_PREFIX)
+                .forEach(properties::put);
+
+
+        properties.put("application.id", "kafka-streams-rest-api" + LocalDateTime.now());
+
+        return properties;
+
+    }
+
     public Properties getStreamProperties(){
         Properties properties = new Properties();
 

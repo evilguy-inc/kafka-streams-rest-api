@@ -3,6 +3,8 @@ package com.evilguyinc.kafka.streams.rest.service;
 import com.evilguyinc.kafka.streams.rest.domain.Topic;
 import com.evilguyinc.kafka.streams.rest.properties.StreamProperties;
 import org.apache.avro.generic.GenericData;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -12,7 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
+
+import static com.evilguyinc.kafka.streams.rest.util.KafkaTopicUtil.isNotDefaultKafkaTopic;
 
 @Service
 public class StreamService {
@@ -60,5 +67,26 @@ public class StreamService {
         streams.start();
     }
 
+
+    public Map<String, List<PartitionInfo>> getUserKafkaTopics(){
+
+
+        return getAllKafkaTopics()
+                .entrySet().stream()
+                .filter(topic -> isNotDefaultKafkaTopic(topic.getKey()))
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                        Map.Entry::getValue));
+    }
+
+    public Map<String, List<PartitionInfo>> getAllKafkaTopics() {
+
+        Properties streamProperties = this.streamProperties.getKafkaConsumerProperties();
+
+        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(streamProperties);
+        Map<String, List<PartitionInfo>> topics = consumer.listTopics();
+        consumer.close();
+
+        return topics;
+    }
 
 }

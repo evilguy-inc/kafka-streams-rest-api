@@ -55,4 +55,7 @@ public class MessageController {
     }
 
 
+    // TODO find all messages by key
+
+    // TODO last state of elements streams into table format by key
 }
