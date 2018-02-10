@@ -43,7 +43,7 @@ public class ApplicationConfig {
 
 
     @Bean
-    private ObjectMapper getObjectMapper(){
+    public ObjectMapper getObjectMapper(){
         return objectMapper;
     }
 
