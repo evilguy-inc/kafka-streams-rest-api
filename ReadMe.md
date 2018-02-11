@@ -52,3 +52,9 @@ Support/Development
 ```bash
     docker build --rm -f docker/kafka-streams-rest-api/Dockerfile -t kafka-streams-rest-api:latest docker/kafka-streams-rest-api
 ```
+
+3. publish to docker
+```bash
+    docker tag kafka-streams-rest-api:latest evilguy/kafka-streams-rest-api:0.0.1
+    docker push evilguy/kafka-streams-rest-api:0.0.1
+```
