@@ -15,6 +15,10 @@ You can pull down and run it locally by simply executing (don't forget to define
         -d kafka-streams-rest-api:latest
 ```
 
+Single line:
+```bash
+    docker run --rm -p 9096:9096 --network=compose_default  -e "RUN_ARGS=--kafka.bootstrap.servers=broker:9092 --kafka.zookeeper.connect=zookeeper:2181 --kafka.schema.registry.url=http://schema-registry:8081"  -d evilguy/kafka-streams-rest-api:latest
+```
 
 Docker compose usage example:
 ```yaml
