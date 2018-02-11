@@ -41,14 +41,14 @@ Quickstart
 Support/Development
 -------------------
 
-#### Creating a docker container
+#### Creating a docker image
 
 1. Build an artifact:
 ```bash
     mvn clean package -Pprepare-for-docker
 ```
 
-2. build docker container
+2. build docker image
 ```bash
     docker build --rm -f docker/kafka-streams-rest-api/Dockerfile -t kafka-streams-rest-api:latest docker/kafka-streams-rest-api
 ```
@@ -56,5 +56,7 @@ Support/Development
 3. publish to docker
 ```bash
     docker tag kafka-streams-rest-api:latest evilguy/kafka-streams-rest-api:0.0.1
+    docker tag kafka-streams-rest-api:latest evilguy/kafka-streams-rest-api:latest
     docker push evilguy/kafka-streams-rest-api:0.0.1
+    docker push evilguy/kafka-streams-rest-api:latest
 ```
