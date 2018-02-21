@@ -19,6 +19,9 @@ public class AvroDeserializer {
             if (element instanceof GenericData.Record)
                 record = buildGenericDataRecord((GenericData.Record) element, record);
 
+            if (element == null)
+                record.append("null");
+
             if (i.hasNext())
                 record.append(",");
 
