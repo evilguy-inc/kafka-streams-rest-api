@@ -14,15 +14,13 @@ public class TopicCache {
     }
 
 
-    private void addTopic(String topicName) {
+    public void addTopic(String topicName) {
         // TODO add topic serde, it might be different
         Topic topic = new Topic(topicName, "Serde???");
         topicCache.put(topicName, MessageCache.createMessageCache(topic));
     }
 
     public void putMessage(String topic, String key, Object value) {
-        if (!topicCache.containsKey(topic))
-            addTopic(topic);
 
         topicCache.get(topic).putMessage(key, value);
     }

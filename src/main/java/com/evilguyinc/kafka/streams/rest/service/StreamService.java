@@ -1,5 +1,6 @@
 package com.evilguyinc.kafka.streams.rest.service;
 
+import com.evilguyinc.kafka.streams.rest.cache.TopicCache;
 import com.evilguyinc.kafka.streams.rest.domain.Topic;
 import com.evilguyinc.kafka.streams.rest.properties.StreamProperties;
 import org.apache.avro.generic.GenericData;
@@ -30,6 +31,8 @@ public class StreamService {
     private StreamProperties streamProperties;
     @Autowired
     private MessageService messageService;
+    @Autowired
+    private TopicCache topicCache;
 
     private KafkaStreams streams;
 
@@ -64,7 +67,9 @@ public class StreamService {
         KafkaStreams streams = new KafkaStreams(streamBuilder.build(), streamProperties);
 
         logger.info("Starting event streaming.");
+        topicCache.addTopic(topic.getTopic());
         streams.start();
+
     }
 
 
