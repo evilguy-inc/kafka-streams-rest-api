@@ -1,8 +1,10 @@
 package com.evilguyinc.kafka.streams.rest.service;
 
 import com.evilguyinc.kafka.streams.rest.cache.TopicCache;
+import com.evilguyinc.kafka.streams.rest.deserializer.AvroJsonConverter;
 import com.evilguyinc.kafka.streams.rest.domain.Topic;
 import com.evilguyinc.kafka.streams.rest.properties.StreamProperties;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.avro.generic.GenericData;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.PartitionInfo;
@@ -33,6 +35,8 @@ public class StreamService {
     private MessageService messageService;
     @Autowired
     private TopicCache topicCache;
+    @Autowired
+    private AvroJsonConverter avroJsonConverter;
 
     private KafkaStreams streams;
 
@@ -56,7 +60,11 @@ public class StreamService {
                 .map((key, value) -> {
                     if (key instanceof GenericData.Record) {
 
-                        messageService.putMessage(topic.getTopic(), key.toString(), value);
+                        ObjectNode jsonKey = avroJsonConverter.getJsonFrom((GenericData.Record) key);
+                        ObjectNode jsonValue = avroJsonConverter.getJsonFrom((GenericData.Record) value);
+
+                        messageService.putMessage(topic.getTopic(),
+                                String.valueOf(((GenericData.Record) key).get(0)), jsonValue);
 
                     }
 
@@ -73,7 +81,7 @@ public class StreamService {
     }
 
 
-    public Map<String, List<PartitionInfo>> getUserKafkaTopics(){
+    public Map<String, List<PartitionInfo>> getUserKafkaTopics() {
 
 
         return getAllKafkaTopics()

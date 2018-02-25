@@ -2,6 +2,7 @@ package com.evilguyinc.kafka.streams.rest.config;
 
 import com.evilguyinc.kafka.streams.rest.cache.TopicCache;
 import com.evilguyinc.kafka.streams.rest.deserializer.AvroDeserializer;
+import com.evilguyinc.kafka.streams.rest.deserializer.AvroJsonConverter;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,6 +54,11 @@ public class ApplicationConfig {
     @Bean
     public ObjectWriter getObjectWriter(){
         return getObjectMapper().writer();
+    }
+
+    @Bean
+    public AvroJsonConverter getAvroJsonConverter(){
+        return new AvroJsonConverter();
     }
 
     @Bean

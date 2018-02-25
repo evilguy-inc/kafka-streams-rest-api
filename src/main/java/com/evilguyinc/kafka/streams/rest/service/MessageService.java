@@ -1,6 +1,7 @@
 package com.evilguyinc.kafka.streams.rest.service;
 
 import com.evilguyinc.kafka.streams.rest.cache.TopicCache;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,19 +18,19 @@ public class MessageService {
     @Autowired
     private TopicCache topicCache;
 
-    public void putMessage(String topic, String key, Object value) {
+    public void putMessage(String topic, String key, ObjectNode value) {
         topicCache.putMessage(topic, key, value);
     }
 
 
-    public List<Object> getAllMessages(String topic) {
+    public List<ObjectNode> getAllMessages(String topic) {
         return topicCache.getAllMessages(topic);
     }
 
-    public List<Object> getMessages(String topic, Integer start, Integer lenght) {
-        List<Object> allMessages = topicCache.getAllMessages(topic);
+    public List<ObjectNode> getMessages(String topic, Integer start, Integer lenght) {
+        List<ObjectNode> allMessages = topicCache.getAllMessages(topic);
 
-        List<Object> result = new ArrayList<>();
+        List<ObjectNode> result = new ArrayList<>();
 
         for (int i = start;
              i < allMessages.size() && i < (start + lenght); i++) {
@@ -41,7 +42,7 @@ public class MessageService {
     }
 
 
-    public List<Object> getMessage(String topic, String key) {
+    public List<ObjectNode> getMessage(String topic, String key) {
         return topicCache.getMessage(topic, key);
     }
 }
