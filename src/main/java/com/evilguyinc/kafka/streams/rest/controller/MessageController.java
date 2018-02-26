@@ -2,18 +2,20 @@ package com.evilguyinc.kafka.streams.rest.controller;
 
 import com.evilguyinc.kafka.streams.rest.deserializer.AvroDeserializer;
 import com.evilguyinc.kafka.streams.rest.exception.KafkaStreamsRestException;
-import com.evilguyinc.kafka.streams.rest.exception.ResourceNotFoundException;
 import com.evilguyinc.kafka.streams.rest.service.MessageService;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static com.evilguyinc.kafka.streams.rest.constants.StreamConfigurations.DEFAULT_STREAM_SEARCH_RESULT_LIMIT;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -45,10 +47,10 @@ public class MessageController {
     public List<ObjectNode> getMessages(
             @RequestParam(value = "topic") String topic,
             @RequestParam(value = "start") Integer start,
-            @RequestParam(value = "lenght") Integer lenght
+            @RequestParam(value = "lenght") Long lenght
     ) {
 
-        if ( start < 0 | lenght <= 0)
+        if (start < 0 | lenght <= 0)
             throw new KafkaStreamsRestException("Start index and Lenght cannot be negative values.");
 
         List<ObjectNode> messages = messageService.getMessages(topic, start, lenght);
@@ -59,7 +61,6 @@ public class MessageController {
     }
 
 
-    // TODO find all messages by key
     @RequestMapping(method = GET, produces = "application/json")
     @ResponseStatus(OK)
     public List<ObjectNode> getMessage(
@@ -67,11 +68,27 @@ public class MessageController {
             @RequestParam(value = "key") String key
     ) {
 
-
         List<ObjectNode> messages = Optional.ofNullable(messageService.getMessage(topic, key))
-                .orElseThrow(() -> new ResourceNotFoundException("Message with required key " + key + " doesn't exist."));
+                .orElse(Arrays.asList());
 
-        // TODO check if topic is avro serde
+        return messages;
+    }
+
+
+    @RequestMapping(value = "/find", method = GET, produces = "application/json")
+    @ResponseStatus(OK)
+    public List<ObjectNode> findMessages(
+            @RequestParam(value = "topic") String topic,
+            @RequestParam(value = "searchTag") String searchTag,
+            @RequestParam(value = "limit", required = false,
+                    defaultValue = DEFAULT_STREAM_SEARCH_RESULT_LIMIT) Long limit
+    ) {
+
+        if (StringUtils.isEmpty(searchTag))
+            return messageService.getMessages(topic, 0, limit);
+
+        List<ObjectNode> messages = Optional.ofNullable(messageService.findMessages(topic, searchTag, limit))
+                .orElse(Arrays.asList());
 
         return messages;
     }
@@ -79,5 +96,4 @@ public class MessageController {
 
     // TODO last state of elements streams into table format by key
 
-    // TODO find element not by key
 }

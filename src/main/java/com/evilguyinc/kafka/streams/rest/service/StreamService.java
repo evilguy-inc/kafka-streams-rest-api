@@ -16,7 +16,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -38,13 +40,24 @@ public class StreamService {
     @Autowired
     private AvroJsonConverter avroJsonConverter;
 
-    private KafkaStreams streams;
+    private List<KafkaStreams> streams;
+
+    @PostConstruct
+    public void init() {
+        streams = new ArrayList<>();
+        shutdownHook();
+    }
 
 
     @PreDestroy
     public void closeStream() {
         logger.info("Terminating event stream.");
-        streams.close();
+        streams.forEach(KafkaStreams::close);
+    }
+
+    private void shutdownHook() {
+        // Add shutdown hook to respond to SIGTERM and gracefully close Kafka Streams
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> streams.forEach(KafkaStreams::close)));
     }
 
 
@@ -64,7 +77,7 @@ public class StreamService {
                         ObjectNode jsonValue = avroJsonConverter.getJsonFrom((GenericData.Record) value);
 
                         messageService.putMessage(topic.getTopic(),
-                                String.valueOf(((GenericData.Record) key).get(0)), jsonValue);
+                                jsonKey.asText(), jsonValue);
 
                     }
 
@@ -72,11 +85,12 @@ public class StreamService {
                 });
 
 
-        KafkaStreams streams = new KafkaStreams(streamBuilder.build(), streamProperties);
+        KafkaStreams kafkaStreams = new KafkaStreams(streamBuilder.build(), streamProperties);
+        streams.add(kafkaStreams);
 
         logger.info("Starting event streaming.");
         topicCache.addTopic(topic.getTopic());
-        streams.start();
+        kafkaStreams.start();
 
     }
 
